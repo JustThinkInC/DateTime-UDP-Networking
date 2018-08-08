@@ -1,4 +1,4 @@
-import selectors
+import select
 import socket
 import sys
 
@@ -51,6 +51,7 @@ def start(dateTime, hostNameIP, port):
     except:
         print("The IP/hostname supplied does not exit")
         return
+    #TODO: get address by localhost if ip failed
     if not (1024 <= port <= 64000):
         print("Error: Port number must be between 1024 and 64000")
         return 
@@ -60,6 +61,12 @@ def start(dateTime, hostNameIP, port):
     #Crete DT-Request packet and send it
     dt = DT_request(MAGIC_NO, PKT_TYPE, request)
     sock.sendto(bytearray(dt.packet()), addr[0][4])
+    #TODO: Get response in 1sec or exit
+    select.select([], sock, [])
+    #TODO: Check response packet validity
+    
+    #TODO: Print response packet
+    
 
 def main():
     dateTime = None
@@ -71,5 +78,5 @@ def main():
     else:
         start(sys.argv[1], sys.argv[2], int(sys.argv[3]))
 
-main()
-#start("date", '127.0.0.1', 1027)
+#main()
+start("date", '127.0.0.1', 1027)

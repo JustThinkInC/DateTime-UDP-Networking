@@ -60,5 +60,16 @@ def start(dateTime, hostNameIP, port):
     #Crete DT-Request packet and send it
     dt = DT_request(MAGIC_NO, PKT_TYPE, request)
     sock.sendto(bytearray(dt.packet()), addr[0][4])
-    
-start("date", '127.0.0.1', 1027)
+
+def main():
+    dateTime = None
+    hostNameIP = None
+    port = None
+    inp = str(sys.argv)
+    if len(inp.split()) < 4:
+        print("Usage: <date> or <time> host_ip_address port")  
+    else:
+        start(sys.argv[1], sys.argv[2], int(sys.argv[3]))
+
+main()
+#start("date", '127.0.0.1', 1027)

@@ -7,6 +7,13 @@ from dt_packet import *
 
 
 def client(dateTime, hostNameIP, port):
+    """Takes in a string specifying request ("date" or "time"), 
+    an IP address in dotted decimal notation or a host/domain name,
+    and a port number. The server must be running already using the specified 
+    port to execute correctly. A request packet is then sent to the host/IP.
+    If a packet is received within 1 second, a response packet is made from it
+    and printed if valid.
+    """
     #Check if the request is correct
     if dateTime.lower() not in ["date", "time"]:
         print("First argument must be either 'date' or 'time'")

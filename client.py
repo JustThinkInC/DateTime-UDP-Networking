@@ -25,7 +25,6 @@ def client(dateTime, hostNameIP, port):
         #If localhost address
         else:
             addr = (socket.gethostbyname(hostNameIP), port)
-            
     except:
         print("The IP/hostname supplied does not exit")
         return
@@ -59,8 +58,6 @@ def client(dateTime, hostNameIP, port):
     
     #Print response packet
     print(response_packet)
-    
-    return
     
 
 def main():

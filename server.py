@@ -6,13 +6,6 @@ import calendar
 import locale
 import codecs
 from dt_packet import *
-    
-#MAGIC_NO = 0x497E
-#PACKET_TYPE = 0x0002
-#REQUEST_TYPE = [0x0001, 0x0002]
-#LANG_CODE = [0x0001, 0x0002, 0x0003]
-
-buff_size = 1000
 
 
 def response_text(request_type, language=0x0001):
@@ -56,9 +49,12 @@ def response_text(request_type, language=0x0001):
     return text
 
 
-def start(port1, port2, port3):
+def server(port1, port2, port3):
     localhost = '127.0.0.1'
-    if not (1024 <= port1 <= 64000 and 1024 <= port2 <= 64000 and 1024 <= port3 <= 64000):
+    
+    #Check port range is valid
+    if (port1 not in range(1024, 64000) and port2 not in range(1024, 64000)
+        and port3 not in range(1024, 64000)):
         print("Error: port numbers must be between 1024 and 64000")
         return
     
@@ -83,18 +79,17 @@ def start(port1, port2, port3):
         print("An error has occurred during the port binding process")
         return
      
-    #Loop infinitely
     while True:
         #Wait for requests to the sockets
         read, write, error = select.select([s_en, s_mi, s_de], [], [])
         for s in read:
-            packet, address = s.recvfrom(buff_size)
-            pkt = DT_request(None, None, None, packet)       #Create a DT Request packet
+            packet, address = s.recvfrom(BUFF_SIZE)
+            #Create a DT Request packet
+            pkt = DT_request(None, None, None, packet)       
             if not pkt.check():
-                continue       #go to start of loop
-            #TODO: check for error in pkt above
+                continue        #Go to start of loop
 
-            language = 0x0001 #English
+            language = 0x0001   #English
             if s is s_mi:
                 language = 0x0002 #German
             elif s is s_de:
@@ -102,13 +97,13 @@ def start(port1, port2, port3):
             text = response_text(pkt.requestType, language)
             response_packet = DT_response(MAGIC_NO, RESPONSE_PACKET_TYPE, language, text)
             s.sendto(bytearray(response_packet.packet()), address)
-            #print("WORKING")
-            
-               
-                    
-        #return #terminate loop, just in case forget to restart shell...
+
         
 
 def main():
-    start(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
-start(1025, 1026, 1027)
+    if len(str(sys.argv).split()) < 4:
+        print("Usage: <port1> <port2> <port3>")
+    else:
+        server(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
+
+main()

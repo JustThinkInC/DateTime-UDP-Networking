@@ -5,9 +5,9 @@ import re
 import datetime
 from dt_packet import *
 
-buff_size = 100
 
-def start(dateTime, hostNameIP, port):
+def client(dateTime, hostNameIP, port):
+    #Check if the request is correct
     if dateTime.lower() not in ["date", "time"]:
         print("First argument must be either 'date' or 'time'")
         return
@@ -22,11 +22,14 @@ def start(dateTime, hostNameIP, port):
     except:
         print("The IP/hostname supplied does not exit")
         return
-        
-    if not (1024 <= port <= 64000):
+    
+    #Check the port number is valid    
+    if not port in range(1024, 64000):
         print("Error: Port number must be between 1024 and 64000")
         return 
-    request = 0x0001 if dateTime.lower() == "date" else 0x0002 #set the request type
+    
+    #Set request type
+    request = 0x0001 if dateTime.lower() == "date" else 0x0002 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(1)  #1 second timeout
     
@@ -34,15 +37,20 @@ def start(dateTime, hostNameIP, port):
     dt = DT_request(MAGIC_NO, REQUEST_PACKET_TYPE, request)
     sock.sendto(bytearray(dt.packet()), addr)
     
-    #Get response packet
-    pkt, addr = sock.recvfrom(buff_size)
-    #print(pkt.split())
-    #TODO: Check response packet validity
+    #Get response packet and address
+    try:
+        pkt, addr = sock.recvfrom(BUFF_SIZE)
+    except ConnectionError:
+        print("The request port is unavailable. Please make sure the server has " 
+              + "reserved this port.")
+        return
+    
+    #Construct the response packet and check its validity
     response_packet = DT_response(None, None, None, None, pkt)
     if not response_packet.check():
         return
     
-    #TODO: Print response packet
+    #Print response packet
     print(response_packet)
     
     return
@@ -56,7 +64,7 @@ def main():
     if len(inp.split()) < 4:
         print("Usage: <date> or <time> host_ip_address port")  
     else:
-        start(sys.argv[1], sys.argv[2], int(sys.argv[3]))
+        client(sys.argv[1], sys.argv[2], int(sys.argv[3]))
 
 main()
-#start("date", '127.0.0.1', 1025)
+#client("date", '127.0.0.1', 1025)

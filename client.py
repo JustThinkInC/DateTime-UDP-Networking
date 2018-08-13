@@ -5,6 +5,7 @@ import re
 import datetime
 from dt_packet import *
 
+buff_size = 100
 
 def start(dateTime, hostNameIP, port):
     if dateTime.lower() not in ["date", "time"]:
@@ -13,10 +14,11 @@ def start(dateTime, hostNameIP, port):
     try:
         #Check if IP address
         if re.search('[0-9]{3}.[0-9]{1,3}.[0-9]{1,3}', hostNameIP) != None:
-            addr = socket.getaddrinfo(hostNameIP, port, proto=socket.IPPROTO_UDP)
+            addr = socket.getaddrinfo(hostNameIP, port, proto=socket.IPPROTO_UDP)[0][4]
         #If localhost address
         else:
-            addr = socket.gethostbyname(hostNameIP)
+            addr = (socket.gethostbyname(hostNameIP), port)
+            
     except:
         print("The IP/hostname supplied does not exit")
         return
@@ -30,7 +32,7 @@ def start(dateTime, hostNameIP, port):
     
     #Crete DT-Request packet and send it
     dt = DT_request(MAGIC_NO, REQUEST_PACKET_TYPE, request)
-    sock.sendto(bytearray(dt.packet()), addr[0][4])
+    sock.sendto(bytearray(dt.packet()), addr)
     
     #Get response packet
     pkt, addr = sock.recvfrom(buff_size)
@@ -56,5 +58,5 @@ def main():
     else:
         start(sys.argv[1], sys.argv[2], int(sys.argv[3]))
 
-#main()
-start("date", '127.0.0.1', 1025)
+main()
+#start("date", '127.0.0.1', 1025)

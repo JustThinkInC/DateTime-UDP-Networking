@@ -64,9 +64,8 @@ def client(dateTime, hostNameIP, port):
     
 
 def main():
-    dateTime = None
-    hostNameIP = None
-    port = None
+    """Takes the command line arguments and passes them to client function"""
+    #Check we have right number of arguments
     inp = str(sys.argv)
     if len(inp.split()) < 4:
         print("Usage: <date> or <time> host_ip_address port")  
@@ -74,4 +73,3 @@ def main():
         client(sys.argv[1], sys.argv[2], int(sys.argv[3]))
 
 main()
-#client("date", '127.0.0.1', 1025)

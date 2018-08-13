@@ -50,7 +50,10 @@ def response_text(request_type, language=0x0001):
 
 
 def server(port1, port2, port3):
-    localhost = '127.0.0.1'
+    """Takes in 3 ports, first is English, second is Maori, third is German.
+    Three UDP sockets are then bound to the ports, waits for a packet on any 
+    socket. Upon receiving a packet, if it's valid, creates a response packet
+    and sends it to the appropriate port."""
     
     #Check port range is valid
     if (port1 not in range(1024, 64000) and port2 not in range(1024, 64000)
@@ -67,9 +70,9 @@ def server(port1, port2, port3):
         
     #Bind sockets to port numbers, on fail give error message
     try:
-        s_en.bind((localhost, port1))
-        s_mi.bind((localhost, port2))
-        s_de.bind((localhost, port3))
+        s_en.bind(('', port1))
+        s_mi.bind(('', port2))
+        s_de.bind(('', port3))
         
         #Set as non-blocking
         s_en.setblocking(0)
@@ -101,6 +104,8 @@ def server(port1, port2, port3):
         
 
 def main():
+    """Takes the command line arguements and passes them to server"""
+    #Check for a correct number of arguments
     if len(str(sys.argv).split()) < 4:
         print("Usage: <port1> <port2> <port3>")
     else:

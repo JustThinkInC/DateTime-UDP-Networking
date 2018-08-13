@@ -2,24 +2,26 @@ import datetime
 
 MAGIC_NO = 0x497E
 REQUEST_PACKET_TYPE = 0x0001
-RQST_TYPE = [0x0001, 0x0002]
+REQUEST_TYPE = [0x0001, 0x0002]
 LANG_CODE = [0x0001, 0x0002, 0x0003]
-
 RESPONSE_PACKET_TYPE = 0x0002
+BUFF_SIZE = 1024
+
+def merge_bits(first, second, shift):
+    """Merge two binary numbers into one"""
+    return (first << shift) | second     
 
 
 class DT_response():
     def init_from_packet(self, packet):
-        """Takes a bytearray as input and constructs the packet from it"""
-        
-        def merge(first, second, shift):
-            """Merge two binary numbers into one"""
-            return (first << shift) | second        
-        
-        self.magicNo = merge(packet[0], packet[1], 8)
-        self.packetType = merge(packet[2], packet[3], 8)
-        self.languageCode = merge(packet[4], packet[5], 8)
-        self.year = merge(packet[6], packet[7], 8)
+        """Takes a bytearray as input and constructs the packet from it"""  
+        #Incorrect packet length
+        if len(packet) < 13:
+            return
+        self.magicNo = merge_bits(packet[0], packet[1], 8)
+        self.packetType = merge_bits(packet[2], packet[3], 8)
+        self.languageCode = merge_bits(packet[4], packet[5], 8)
+        self.year = merge_bits(packet[6], packet[7], 8)
         self.month = packet[8]
         self.day = packet[9]
         self.hour = packet[10]
@@ -83,59 +85,54 @@ class DT_response():
     
     
     def check(self):
-        """Validity Check"""
-        #self.languageCode = format(16, str(self.languageCode) +'b')
-        #print(self.languageCode)        
+        """Validity Check, returns True on valid packet"""
+        #Create packet format for easier checking         
         packet = self.packet()
+        
         if len(packet) < 13:
-            print(1)
-            return
+            return False
         elif self.magicNo != MAGIC_NO:
-            print(2)
-            return
+            return False
         elif self.packetType != RESPONSE_PACKET_TYPE:
-            print(3)
-            return
+            return False
         elif self.languageCode not in LANG_CODE:
-            print(4)
-            return
+            return False
         elif self.year >= 2100:
-            print(5)
-            return
-        elif self.month not in range(1, 12): 
-            print(6)
-            return
+            return False
+        elif self.month not in range(1, 12):
+            return False
         elif self.day not in range(1, 31):
-            print(7)
-            return
+            return False
         elif self.hour not in range(0, 23):
-            print(8)
-            return
+            return False
         elif self.minute not in range(0, 59):
-            print(9)
-            return
+            return False
         elif len(packet) != 13 + self.length:
-            print(10)
-            return        
+            return False  
         
         return True
         
         
     def __str__(self):
-        """Returns the text field of the packet""" 
-        return self.text
+        """Returns every part of the packet as a string""" 
+        return "{} {} {} {} {} {} {} {} {} {}".format(self.magicNo, self.packetType,
+                                         self.languageCode, self.year, 
+                                         self.month, self.day, self.hour, 
+                                         self.minute, self.length, self.text)
     
     
     
 class DT_request():
     def init_from_packet(self, packet):
-        #(first << shift) | second   
-        self.magicNo = (packet[0] << 8) | packet[1]
-        self.packetType = (packet[2] << 8 ) | packet[3]
-        self.requestType = (packet[4] << 8) | packet[5]
-        #if not check():
-            #print("ERROR PACKET")
-            #return    
+        """Takes bytearray as input and constructs packet from it"""
+        #Exit on invalid packet
+        if len(packet) < 6:
+            return
+        
+        self.magicNo = merge_bits(packet[0], packet[1], 8)   
+        self.packetType = merge_bits(packet[2], packet[3], 8) 
+        self.requestType = merge_bits(packet[4], packet[5], 8)
+ 
     
     def __init__(self, MagicNo=None, PacketType=None, RequestType=None, packet=None):
         """Initialisiation"""
@@ -152,9 +149,11 @@ class DT_request():
         #Split MagicNo fields to 2 bytes
         m_1 = self.magicNo >> 8
         m_2 = self.magicNo & 255
+        
         #Split packettype to 2 bytes
         pktype_1 = self.packetType >> 8
-        pktype_2 = self.packetType & 255        
+        pktype_2 = self.packetType & 255  
+        
         #Split requesttype to 2 bytes
         rqst_1 = self.requestType >> 8
         rqst_2 = self.requestType & 255 
@@ -167,16 +166,12 @@ class DT_request():
         """Validity Check"""
         packet = self.packet()
         if len(packet) != 6:
-            print(1)
-            return
+            return False
         elif self.magicNo != MAGIC_NO:
-            print(2)
-            return
+            return False
         elif self.packetType != REQUEST_PACKET_TYPE:
-            print(3)
-            return
-        elif self.requestType not in RQST_TYPE:
-            print(4)
-            return 
+            return False
+        elif self.requestType not in REQUEST_TYPE:
+            return False
         
         return True

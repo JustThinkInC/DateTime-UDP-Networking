@@ -1,3 +1,11 @@
+"""Description: This implements a simple UDP server. Three ports are taken as
+   command line arguments. First port is for English, second Maori, third German.
+   If a valid request is received, the server responds with a date-time (DT)
+   packet in the appropriate language for the respective port.
+   
+   Author: George Khella
+"""
+
 import datetime
 import select
 import socket
@@ -9,6 +17,7 @@ from dt_packet import *
 
 
 def response_text(request_type, language=0x0001):
+    """Takes in the request type and language to form the response text"""
     #German month names
     month_de = ['Januar', 'Februar', 'Marz', 'April', 'Mai', 'Juni', 'Juli',
                 'August', 'September', 'Oktober', 'November', 'Dezember']

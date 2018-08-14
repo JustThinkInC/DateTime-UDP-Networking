@@ -1,3 +1,12 @@
+"""Description: This module holds the DT-Response & DT-Request classes. Global constants
+   are also included as well as a merge_bits function for merging two binary
+   numbers. Each class has an __init__, init_from_packet, check and packet
+   method. The response class also includes a __str__ method which returns
+   a string containing every field in the packet.
+   
+   Author: George Khella
+"""
+
 import datetime
 
 MAGIC_NO = 0x497E

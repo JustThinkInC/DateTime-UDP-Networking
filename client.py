@@ -1,3 +1,13 @@
+"""Description: Implements a simple UDP client. A request type (date or time)
+   followed by the host and port number are taken as arguments from command 
+   line. On a valid request, the client sends the request to the port, and waits
+   1 second for a response. On a valid response, the received packet is printed.
+   Note that the server must be running and using the specified port for the 
+   client to work.
+   
+   Author: George Khella
+"""
+
 import select
 import socket
 import sys

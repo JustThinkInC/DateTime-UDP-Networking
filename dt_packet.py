@@ -22,6 +22,8 @@ def merge_bits(first, second, shift):
 
 
 class DT_response():
+    """DT Response packet class. This is the packet containing the requested
+    date/time in the requested language"""
     def init_from_packet(self, packet):
         """Takes a bytearray as input and constructs the packet from it"""  
         #Incorrect packet length
@@ -132,6 +134,8 @@ class DT_response():
     
     
 class DT_request():
+    """The DT-Request packet class."""
+    
     def init_from_packet(self, packet):
         """Takes bytearray as input and constructs packet from it"""
         #Exit on invalid packet

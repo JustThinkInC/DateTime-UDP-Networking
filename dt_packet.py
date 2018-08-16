@@ -5,6 +5,7 @@
    a string containing every field in the packet.
    
    Author: George Khella
+   Date: August 2018
 """
 
 import datetime

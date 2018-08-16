@@ -127,9 +127,12 @@ class DT_response():
         
     def __str__(self):
         """Returns every part of the packet as a string""" 
-        return "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(self.magicNo,
-            self.packetType, self.languageCode, self.year, self.month, self.day,
-            self.hour, self.minute, self.length, self.text)
+        return ("MagicNo = {}\nPacketType = {}\nLanguageCode = {}\nYear = {}\n"+
+                "Month = {}\nDay = {}\nHour = {}\nMinute = {}\nLength = {}\n"+
+                "Text = {}\n").format(hex(self.magicNo), self.packetType, 
+                                      self.languageCode, self.year, self.month, 
+                                      self.day, self.hour, self.minute, 
+                                      self.length, self.text)
     
     
     

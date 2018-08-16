@@ -97,21 +97,21 @@ def server(port1, port2, port3):
     while True:
         #Wait for requests to the sockets
         read, write, error = select.select([s_en, s_mi, s_de], [], [])
-        for s in read:
-            packet, address = s.recvfrom(BUFF_SIZE)
+        for sckt in read:
+            packet, address = sckt.recvfrom(BUFF_SIZE)
             #Create a DT Request packet
             pkt = DT_request(None, None, None, packet)       
             if not pkt.check():
                 continue        #Go to start of loop
 
             language = 0x0001   #English
-            if s is s_mi:
+            if sckt is s_mi:
                 language = 0x0002 #German
-            elif s is s_de:
+            elif sckt is s_de:
                 language = 0x0003 #Maori
             text = response_text(pkt.requestType, language)
             response_packet = DT_response(MAGIC_NO, RESPONSE_PACKET_TYPE, language, text)
-            s.sendto(bytearray(response_packet.packet()), address)
+            sckt.sendto(bytearray(response_packet.packet()), address)
 
         
 

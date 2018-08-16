@@ -64,7 +64,7 @@ def server(port1, port2, port3):
     Three UDP sockets are then bound to the ports, waits for a packet on any 
     socket. Upon receiving a packet, if it's valid, creates a response packet
     and sends it to the appropriate port."""
-    all_ip = '0.0.0.0'
+    
     #Check port range is valid
     if (port1 not in range(1024, 64000) and port2 not in range(1024, 64000)
         and port3 not in range(1024, 64000)):
@@ -77,12 +77,14 @@ def server(port1, port2, port3):
     s_en = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s_mi = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s_de = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        
+    
+    to_all = ''    #Empty string to bind to any available address on host
+    
     #Bind sockets to port numbers, on fail give error message
     try:
-        s_en.bind((all_ip, port1))
-        s_mi.bind((all_ip, port2))
-        s_de.bind((all_ip, port3))
+        s_en.bind((to_all, port1))
+        s_mi.bind((to_all, port2))
+        s_de.bind((to_all, port3))
         
         #Set as non-blocking
         s_en.setblocking(0)

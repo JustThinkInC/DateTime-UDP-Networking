@@ -6,6 +6,7 @@
    client to work.
    
    Author: George Khella
+   Date: August 2018
 """
 
 import select
@@ -36,12 +37,12 @@ def client(dateTime, hostNameIP, port):
         else:
             addr = (socket.gethostbyname(hostNameIP), port)
     except:
-        print("The IP/hostname supplied does not exit")
+        print("The supplied IP/hostname does not exist.")
         return
     
     #Check the port number is valid    
     if not port in range(1024, 64000):
-        print("Error: Port number must be between 1024 and 64000")
+        print("Error: Port number must be between 1024 and 64 000")
         return 
     
     #Set request type
@@ -51,7 +52,13 @@ def client(dateTime, hostNameIP, port):
     
     #Crete DT-Request packet and send it
     dt = DT_request(MAGIC_NO, REQUEST_PACKET_TYPE, request)
-    sock.sendto(bytearray(dt.packet()), addr)
+    
+    #OSError occurs if addr is invalid for use, e.g. 0.0.0.0
+    try:
+        sock.sendto(bytearray(dt.packet()), addr)
+    except OSError:
+        print("The supplied address cannot be used.")
+        return
     
     #Get response packet and address
     try:
@@ -79,4 +86,5 @@ def main():
     else:
         client(sys.argv[1], sys.argv[2], int(sys.argv[3]))
 
+#Start the application
 main()

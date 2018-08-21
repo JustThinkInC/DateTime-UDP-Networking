@@ -16,6 +16,7 @@ REQUEST_TYPE = [0x0001, 0x0002]
 LANG_CODE = [0x0001, 0x0002, 0x0003]
 RESPONSE_PACKET_TYPE = 0x0002
 BUFF_SIZE = 1024
+TEXT_LIMIT = 255
 
 def merge_bits(first, second, shift):
     """Merge two binary numbers into one"""

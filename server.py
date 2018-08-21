@@ -110,6 +110,10 @@ def server(port1, port2, port3):
             elif sckt is s_de:
                 language = 0x0003 #Maori
             text = response_text(pkt.requestType, language)
+            #Check length is in limit
+            if len(text) > TEXT_LIMIT:
+                print("The text is too large to transmit. Limit is 255 bytes")
+                continue
             response_packet = DT_response(MAGIC_NO, RESPONSE_PACKET_TYPE, language, text)
             sckt.sendto(bytearray(response_packet.packet()), address)
 

@@ -35,18 +35,20 @@ def response_text(request_type, language=0x0001):
     day = date.strftime('%d')       #Day number
     year = date.strftime('%Y')      #Year number in YYYY
     
-    
+    text = ''
     #Set text based on requested language and date/time
     if request_type is 0x0001:  
         local_string = "Today's date is "
+        text = local_string + "{} {}, {}".format(month, day, year)
         if language == 0x0002:
             month = month_de[int(date.strftime('%m'))-1]
             local_string = "Ko te ra o tenei ra ko " 
+            text = local_string + "{} {}, {}".format(month, day, year)
         elif language is 0x0003:
             month = month_de[int(date.strftime('%m'))-1]
             local_string = "Heute ist der "            
+            text = local_string + "{} {}, {}".format(day, month, year)
             
-        text = local_string + "{} {}, {}".format(month, day, year)
     elif request_type is 0x0002:
         local_string = "The current time is "
         if language == 0x0002:

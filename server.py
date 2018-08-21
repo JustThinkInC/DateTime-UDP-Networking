@@ -47,7 +47,7 @@ def response_text(request_type, language=0x0001):
         elif language is 0x0003:
             month = month_de[int(date.strftime('%m'))-1]
             local_string = "Heute ist der "            
-            text = local_string + "{} {}, {}".format(day, month, year)
+            text = local_string + "{} {}. {}".format(day, month, year)
             
     elif request_type is 0x0002:
         local_string = "The current time is "
